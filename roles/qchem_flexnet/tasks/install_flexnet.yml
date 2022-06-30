@@ -1,0 +1,20 @@
+---
+- name: Download flexnet tarball
+  get_url:
+    url: "{{ flexnet_url }}"
+    dest: /tmp/flexnet.tgz
+    mode: 0600
+
+- name: Untar flexnet tarball
+  unarchive:
+    src: /tmp/flexnet.tgz
+    dest: "{{ flexnet_prefix }}"
+    remote_src: yes
+
+- name: Generate host id
+  command: "{{ flexnet_prefix }}/flexnet-{{ flexnet_version }}/bin/lmutil lmhostid"
+  register: lmhostid
+
+- name: Print host id
+  debug:
+    msg: "{{ lmhostid.stdout_lines }}"

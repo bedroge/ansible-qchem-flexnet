@@ -1,0 +1,15 @@
+---
+# install redhat-lsb
+
+- name: Check if Flexnet has been installed
+  stat:
+    path: "{{ flexnet_prefix }}/flexnet-{{ flexnet_version }}"
+  register: flexnet_install_path
+
+- name: Install Flexnet
+  include_tasks: install_flexnet.yml
+  when: not flexnet_install_path.stat.exists
+
+- name: Configure and run Flexnet
+  include_tasks: run_flexnet.yml
+  when: flexnet_install_path.stat.exists

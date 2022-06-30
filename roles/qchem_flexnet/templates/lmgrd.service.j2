@@ -1,0 +1,15 @@
+[Unit]
+Description=Licence manger for Q-Chem
+After=network.target
+
+[Service]
+Type=simple
+User=flexlm
+WorkingDirectory={{ flexnet_install_path.stat.path }}
+ExecStart={{ flexnet_install_path.stat.path }}/bin/lmgrd -z -c {{ flexnet_install_path.stat.path }}/etc/{{ license_file | basename }} -l +{{ flexnet_install_path.stat.path }}/logs/logs/lmgrd.log
+SuccessExitStatus=15
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

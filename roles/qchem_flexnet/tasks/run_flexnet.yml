@@ -1,0 +1,52 @@
+---
+- name: Copy license file
+  copy:
+    src: "{{ license_file }}"
+    dest: "{{ flexnet_prefix }}/flexnet-{{ flexnet_version }}/etc/"
+  when: flexnet_install_path.stat.exists
+
+- name: Add the flexlm group
+  group:
+    name: flexlm
+    system: yes
+
+- name: Add the flexlm user
+  user:
+    name: flexlm
+    group: flexlm
+    system: yes
+
+- name: Make log directory
+  file:
+    path: "{{ flexnet_install_path.stat.path }}/logs"
+    state: directory
+
+- name: Set ownership of the flexnet directory
+  file:
+    owner: flexlm
+    group: flexlm
+    path: "{{ flexnet_install_path.stat.path }}"
+    recurse: yes
+
+- name: Set SELinux systemd execute permissions
+  sefcontext:
+    target: "{{ flexnet_install_path.stat.path }}/bin/"
+    setype: bin_t
+    state: present
+
+- name: Apply new SELinux file context to filesystem
+  command: "restorecon -irv {{ flexnet_install_path.stat.path }}/bin/"
+
+- name: Install systemd unit file
+  template:
+    src: lmgrd.service.j2
+    dest: /etc/systemd/system/lmgrd.service
+    mode: 0644
+
+- name: Start and enable lmgrd service
+  systemd:
+    enabled: yes
+    state: restarted
+    daemon_reload: yes
+    name: lmgrd
+

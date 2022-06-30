@@ -1,0 +1,6 @@
+---
+flexnet_prefix: /opt
+flexnet_version: 11.18.0
+flexnet_url: https://downloads.q-chem.com/flexnet.tgz
+
+license_file: qchem_7594.lic

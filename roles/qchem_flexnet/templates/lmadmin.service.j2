@@ -1,0 +1,28 @@
+[Unit]
+Description= lmadmin is the licensing module server and administration UI.. Source function library.
+
+#
+# Example startup script for the license administration daemon.
+# On Latest Linux systems this file would go in the /etc/systemd/system  directory (make
+# sure it's marked executable after copying it there), and then the command:
+#
+#       systemctl enable lmadmin
+#
+# can be used to tell the system to run it on startup.
+#
+
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+#Environment="installDir={{ flexnet_install_path.stat.path }}/bin/lmadmin"
+User=lmadmin
+Group=lmadmin
+PIDFile={{ flexnet_install_path.stat.path }}/bin/lmadmin/logs/lmadmin.pid
+
+ExecStart={{ flexnet_install_path.stat.path }}/bin/lmadmin/lmadmin -root {{ flexnet_install_path.stat.path }}/bin/lmadmin
+ExecReload=/bin/kill -HUP ${PIDFile}
+ExecStop=/bin/kill -WINCH ${PIDFile}
+
+[Install]
+WantedBy=multi-user.target
