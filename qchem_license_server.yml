@@ -3,6 +3,7 @@
 - name: Install Q-Chem license server
   hosts: qchem_license_server
   roles:
+    - update
     - qchem_flexnet
   become: True
 
